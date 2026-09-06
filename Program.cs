@@ -3,80 +3,30 @@ using System.Threading;
 
 Random rand = new Random();
 
-static void Wait(double seconds)
-{
-    Thread.Sleep((int)(seconds * 1000));
-}
+Console.Write("\u001b[0m");
 
-static int GetChoice(string prompt, string[] options)
-{
-    int selectedChoice = -1;
-
-    while (selectedChoice < 1 || selectedChoice > options.Length)
-    {
-        Typewriter(prompt);
-        
-        for (int i = 0; i < options.Length; i++)
-        {
-            Console.WriteLine($"{i + 1}. {options[i]}");
-        }
-
-        Console.Write("> ");
-        string input = Console.ReadLine() ?? "";
-
-        if (!int.TryParse(input, out selectedChoice) || selectedChoice < 1 || selectedChoice > options.Length)
-        {
-            Console.WriteLine($"\n[Invalid choice. Please enter a number between 1 and {options.Length}]\n");
-            selectedChoice = -1; 
-        }
-    }
-
-    return selectedChoice;
-}
-
-static void Typewriter(string text, int delayMs = 40)
-{
-    foreach (char c in text)
-    {
-        Console.Write(c);
-        Thread.Sleep(delayMs);
-    }
-    Console.WriteLine();
-}
-
-static void GameOver(string message)
-{
-    Console.WriteLine();
-    Typewriter($"=== GAME OVER ===");
-    Typewriter(message);
-    Wait(2);
-    
-    Console.WriteLine("\nPress any key to exit...");
-    Console.ReadKey(true);
-    
-    Environment.Exit(0); 
-}
-
-Console.WriteLine("Welcome to TextAdventure"); 
+Console.WriteLine($"{Colors.Bold}{Colors.Magenta}Welcome to TextAdventure{Colors.Reset}"); 
 Console.WriteLine();
-Console.WriteLine("Disclaimer: This game is pretty trash lol");
-Console.Write("Proceed (y/n)? ");
+Console.WriteLine($"{Colors.DarkGray}Disclaimer: This game is pretty trash lol{Colors.Reset}");
+Console.Write($"{Colors.Yellow}Proceed (y/n)? {Colors.Reset}");
 string proceed = Console.ReadLine() ?? "n";
 if (proceed.ToLower() != "y")
 {
-    Console.WriteLine("Exiting game...");
+    Console.WriteLine($"{Colors.Red}Exiting game...{Colors.Reset}");
     return;
 }
 Console.WriteLine();
 Wait(1);
-Console.Write("Enter your name: ");
+Console.Write($"{Colors.Cyan}Enter your name: {Colors.Reset}");
 GameState.PlayerName = Console.ReadLine() ?? "Player";
+if (string.IsNullOrWhiteSpace(GameState.PlayerName)) GameState.PlayerName = "Player";
+
 Console.WriteLine();
-Typewriter("Welcome, " + GameState.PlayerName + "! Let's begin your adventure.");
+Typewriter($"Welcome, {Colors.Green}{GameState.PlayerName}{Colors.Reset}! Let's begin your adventure.");
 
 Wait(3);
 Console.WriteLine();
-Typewriter("You find yourself in a dark forest.... ALONE. The trees tower above you, and the path ahead is unclear.\n");
+Typewriter($"You find yourself in a dark forest.... {Colors.Bold}{Colors.Red}ALONE.{Colors.Reset} The trees tower above you, and the path ahead is unclear.\n");
 
 string[] forestChoices = {
     "Explore the forest",
@@ -89,12 +39,12 @@ int choice = GetChoice("What will you do?", forestChoices);
 switch(choice)
 {
     case 1:
-        Typewriter("You step deeper into the forest, pushing through the thick undergrowth");
-        Typewriter("the howls of distant creatures echo through the trees. You feel a sense");
+        Typewriter("You step deeper into the forest, pushing through the thick undergrowth.");
+        Typewriter($"The howls of {Colors.Red}distant creatures{Colors.Reset} echo through the trees. You feel a sense");
         Typewriter("of unease as you continue forward, unsure of what lies ahead.");
         Wait(3);
         Console.WriteLine();
-        Typewriter("Suddenly, a wild beast jumps before you, it's howls fill the air. You must act quickly!");
+        Typewriter($"Suddenly, a {Colors.Red}{Colors.Bold}wild beast{Colors.Reset} jumps before you! Its howls fill the air. You must act quickly!");
         Console.WriteLine();
         string[] beastChoices = {
             "Fight the beast",
@@ -106,20 +56,20 @@ switch(choice)
         switch(choice)
         {
             case 1:
-                Typewriter("You awkwardly approach the beast, it's teeth bared and eyes glowing. You swing your");
-                Typewriter("fists wildly, making you look like the fool, the beast eats your head off... You are dead.");
+                Typewriter("You awkwardly approach the beast, its teeth bared and eyes glowing. You swing your");
+                Typewriter($"fists wildly, making you look like a fool. The beast {Colors.Red}eats your head off...{Colors.Reset} You are dead.");
                 Wait(3);
                 GameOver("Who brings their fists to a wild fight? You apparently...");
                 break;
             case 2:
-                Typewriter("You turn and run, stumbling over rocks and branches, the beast growls menacinly behind you...");
+                Typewriter("You turn and run, stumbling over rocks and branches, the beast growls menacingly behind you...");
                 Wait(3);
                 Console.WriteLine();
-                int escapeRoll = rand.Next(1,6);
+                int escapeRoll = rand.Next(1, 6);
                 if (escapeRoll <= 3)
                 {
-                    Typewriter("As you rush through the woods, the beast catches up to you and tears you apart. You lay on the");
-                    Typewriter("ground helplessly, until it fades to black... You are dead.");
+                    Typewriter("As you rush through the woods, the beast catches up to you and tears you apart.");
+                    Typewriter($"You lay on the ground helplessly, until it fades to black... {Colors.Red}You are dead.{Colors.Reset}");
                     Wait(3);
                     GameOver("You should have fought the beast or tried to tame it. Running away was not the best choice.");
                 }
@@ -129,14 +79,14 @@ switch(choice)
                     Typewriter("a small rock, and stop for a rest.");
                     Console.WriteLine();
                     Wait(2);
-                    Typewriter("You restored +5 HP");
+                    Typewriter($"{Colors.Green}You restored +5 HP{Colors.Reset}");
                     GameState.PlayerHP += 5;
                     Clearing();
                 }
                 break;
             case 3:
                 Typewriter("You cautiously approach the beast, speaking softly and extending your hand. The beast tilts its head");
-                Typewriter("in confusion, but after a tense momenet, it...");
+                Typewriter("in confusion, but after a tense moment, it...");
                 Wait(3);
                 Typewriter(".");
                 Wait(1);
@@ -144,36 +94,101 @@ switch(choice)
                 Wait(1);
                 Typewriter("...");
                 Wait(1);
-                Typewriter("eats your head off. You are dead.");
+                Typewriter($"{Colors.Red}eats your head off.{Colors.Reset} You are dead.");
                 Wait(3);
                 GameOver("Mercy does not work on the wild...");
                 break;
         }
         break;
     case 2:
-        Typewriter("You wander through the forest, looking for anything of value, you push");
+        Typewriter("You wander through the forest, looking for anything of value. You push");
         Typewriter("through branches and leaves, but come up empty-handed. As you start to");
-        Typewriter("turn back, you spot a empty clearing up ahead...");
+        Typewriter("turn back, you spot an empty clearing up ahead...");
         Wait(3);
         Clearing();
         break;
     case 3: 
-        Typewriter("You cry out for help, desperately, but the forest remains silent. The howls of the");
+        Typewriter("You cry out for help desperately, but the forest remains silent. The howls of the");
         Typewriter("wild creatures call to you... This was a bad idea, you think to yourself. You start");
-        Typewriter("to run, but the howls grow louder... Your not getting out of this...");
+        Typewriter($"to run, but the howls grow louder... {Colors.Red}You're not getting out of this...{Colors.Reset}");
         Wait(3);
         GameOver("What part of \"Alone\" did you not understand?");
         break;
 }
 
-static void Clearing()
+void Wait(double seconds)
 {
-    Typewriter("The clearing gives you a beautiful view of the darkening sky. and as you wait there, you");
-    Typewriter("you feel almost at peace, but than you hear a rustling... Was it the wind, a beast, or");
+    Thread.Sleep((int)(seconds * 1000));
+}
+
+int GetChoice(string prompt, string[] options)
+{
+    int selectedChoice = -1;
+
+    while (selectedChoice < 1 || selectedChoice > options.Length)
+    {
+        Typewriter($"{Colors.Cyan}{prompt}{Colors.Reset}");
+        
+        for (int i = 0; i < options.Length; i++)
+        {
+            Console.WriteLine($"  {Colors.Yellow}{i + 1}.{Colors.Reset} {options[i]}");
+        }
+
+        Console.Write($"{Colors.Bold}> {Colors.Reset}");
+        string input = Console.ReadLine() ?? "";
+
+        if (!int.TryParse(input, out selectedChoice) || selectedChoice < 1 || selectedChoice > options.Length)
+        {
+            Console.WriteLine($"\n{Colors.Red}[Invalid choice. Please enter a number between 1 and {options.Length}]{Colors.Reset}\n");
+            selectedChoice = -1; 
+        }
+    }
+
+    return selectedChoice;
+}
+
+void Typewriter(string text, int delayMs = 30)
+{
+    bool inAnsi = false;
+    foreach (char c in text)
+    {
+        if (c == '\u001b') inAnsi = true;
+        
+        Console.Write(c);
+        
+        if (inAnsi)
+        {
+            if (c == 'm') inAnsi = false;
+        }
+        else
+        {
+            Thread.Sleep(delayMs);
+        }
+    }
+    Console.WriteLine();
+}
+
+void GameOver(string message)
+{
+    Console.WriteLine();
+    Typewriter($"{Colors.Red}{Colors.Bold}=== GAME OVER ==={Colors.Reset}");
+    Typewriter($"{Colors.Red}{message}{Colors.Reset}");
+    Wait(2);
+    
+    Console.WriteLine($"\n{Colors.DarkGray}Press any key to exit...{Colors.Reset}");
+    Console.ReadKey(true);
+    
+    Environment.Exit(0); 
+}
+
+void Clearing()
+{
+    Typewriter("The clearing gives you a beautiful view of the darkening sky, and as you wait there,");
+    Typewriter("you feel almost at peace, but then you hear a rustling... Was it the wind, a beast, or");
     Typewriter("something else? You can't be sure, but you know you need to be ready for anything.");
     Wait(3);
-    Typewriter("Suddenly, a pain in your stomach makes you dizzy, you need to find some food... fast. You");
-    Typewriter("scan the surroundings, and spot a small animal, which could be a source of food, but it could");
+    Typewriter($"Suddenly, a pain in your stomach makes you dizzy, you need to find some food... {Colors.Yellow}fast.{Colors.Reset}");
+    Typewriter("You scan the surroundings and spot a small animal, which could be a source of food, but it could");
     Typewriter("also be your demise...");
     Console.WriteLine();
     Wait(1);
@@ -187,10 +202,9 @@ static void Clearing()
     {
         case 1: 
             Typewriter("You approach the beast with malice in your eyes, and as you step over it, you reach");
-            Typewriter("for your knife, but... you don't have any knife. The animal, seeing yoour weakness, bites");
-            Typewriter("you...");
+            Typewriter($"for your knife, but... {Colors.Yellow}you don't have any knife.{Colors.Reset} The animal, seeing your weakness, bites you!");
             Console.WriteLine();
-            Typewriter("You took 5 damage!");
+            Typewriter($"{Colors.Red}You took 5 damage!{Colors.Reset}");
             GameState.PlayerHP -= 5;
             if (GameState.PlayerHP <= 0)
             {
@@ -200,18 +214,18 @@ static void Clearing()
             else
             {
                 Typewriter("You manage to scare the animal away, but you are left with a wound and a sense of disappointment.");
-                Typewriter("how could you have lost to a simple creature. Oh well, be greatful you survived at all...");
+                Typewriter("How could you have lost to a simple creature? Oh well, be grateful you survived at all...");
                 Wait(2);
                 Clearing();
             }
             break;
         case 2:
-            Typewriter("You decide to ignore the animal, and contiune your everlasting thirst for food. You search the clearing");
-            Typewriter("and finally find a small berry bush, and eat the berries, restoring your health.");
+            Typewriter("You decide to ignore the animal, and continue your everlasting thirst for food. You search the clearing");
+            Typewriter($"and finally find a small berry bush, and eat the berries, restoring your health.");
             GameState.PlayerHP += 5;
-            Typewriter("You restored +5 HP");
+            Typewriter($"{Colors.Green}You restored +5 HP{Colors.Reset}");
             Wait(2);
-            Typewriter("But as you finish eating, you hear a rustling in the bushes, and a wild beast jumps out at you!");
+            Typewriter($"But as you finish eating, you hear a rustling in the bushes, and a {Colors.Red}wild beast{Colors.Reset} jumps out at you!");
             Typewriter("Its fangs glint in the moonlight... This doesn't look good, you need to act fast!");
             Wait(2);
             Console.WriteLine();
@@ -222,32 +236,30 @@ static void Clearing()
             Typewriter("and you feel a sense of despair. You hear the howls of the wild creatures, and you know that your");
             Typewriter("time is up...");
             Wait(3);
-            GameOver("What a pussy, imagine giving up in a forest, you should be ashamed of yourself.");
+            GameOver("What a coward, imagine giving up in a forest. You should be ashamed of yourself.");
             break;
-
     }
 }
 
-static void BeastCombat()
+void BeastCombat()
 {
-    int beastHP = 100;
+    int beastHP = 40;
     int beastAttack = 5;
     int beastDefense = 2;
     int turnCount = 0;
     int turnLimit = 10;
-    Random rand = new Random();
     string[] fightChoices =
     {
         "Attack",
         "Defend",
         "Flee",
     };
-    Typewriter("The forest beast appears...");
+    Typewriter($"{Colors.Red}{Colors.Bold}The forest beast appears...{Colors.Reset}");
     Wait(3);
     while (beastHP > 0 && GameState.PlayerHP > 0)
     {
         turnCount++;
-        Console.WriteLine($"Turn {turnCount}: (Death in {turnLimit - turnCount})");
+        Console.WriteLine($"\n{Colors.Magenta}Turn {turnCount}:{Colors.Reset} {Colors.DarkGray}(Death in {turnLimit - turnCount}){Colors.Reset}");
         int choice = GetChoice("What do you do?", fightChoices);
         switch(choice)
         {
@@ -255,7 +267,7 @@ static void BeastCombat()
                 int playerAttack = rand.Next(1, 10);
                 int damageToBeast = Math.Max(playerAttack - beastDefense, 0);
                 beastHP -= damageToBeast;
-                Typewriter("You pucnh the beast, dealing " + damageToBeast + " damage! Beast HP: " + beastHP);
+                Typewriter($"You punch the beast, dealing {Colors.Yellow}{damageToBeast}{Colors.Reset} damage! Beast HP: {Colors.Red}{beastHP}{Colors.Reset}");
                 break;
             case 2:
                 Typewriter("You brace yourself for the beast's attack, reducing the damage taken.");
@@ -266,13 +278,15 @@ static void BeastCombat()
                 int fleeRoll = rand.Next(1, 6);
                 if (fleeRoll <= 3)
                 {
-                    Typewriter("You successfully escape from the beast!");
-                    Clearing();
-                    return;
+                    Typewriter($"{Colors.Green}You successfully escape from the beast!{Colors.Reset}");
+                    Console.WriteLine();
+                    Typewriter($" {Colors.Red} but than die from hunger... RIP");
+                    GameOver("Stop being a coward!");
+                    break;
                 }
                 else
                 {
-                    Typewriter("You fail to escape, and the beast attacks you!");
+                    Typewriter($"{Colors.Red}You fail to escape, and the beast attacks you!{Colors.Reset}");
                 }
                 break;
         }
@@ -280,37 +294,50 @@ static void BeastCombat()
         {
             int damageToPlayer = Math.Max(beastAttack - rand.Next(1, 5), 0);
             GameState.PlayerHP -= damageToPlayer;
-            Typewriter("The beast bites you, dealing " + damageToPlayer + " damage! Your HP: " + GameState.PlayerHP);
+            Typewriter($"The beast bites you, dealing {Colors.Red}{damageToPlayer}{Colors.Reset} damage! Your HP: {Colors.Green}{GameState.PlayerHP}{Colors.Reset}");
         }
-        else
+
+        if (GameState.PlayerHP <= 0)
         {
-            Typewriter("You fall to the ground, and the beast stands over you, victorious. You have been defeated.");
+            Typewriter($"You fall to the ground, and the beast stands over you, victorious. {Colors.Red}You have been defeated.{Colors.Reset}");
             Wait(3);
-            GameOver("Ouch... That's gotta hurt (both physiucally and emotionally).");
+            GameOver("Ouch... That's gotta hurt (both physically and emotionally).");
         }
 
         if (turnCount >= turnLimit)
         {
-            Typewriter("You feeel exhausted, but foul beasts do not care... They circle in");
-            Typewriter("for the kill, and you know your time is up...");
+            Typewriter("You feel exhausted, but foul beasts do not care... They circle in");
+            Typewriter($"for the kill, and you know your time is up...");
             Wait(3);
-            GameOver("Gotta go fast next time");
+            GameOver("Gotta go fast next time!");
         }
     }
     Console.WriteLine();
     Typewriter("You have defeated the beast, and it lies on the ground, lifeless. You just");
-    Typewriter("stand there... the journeys over (in this demo lol)");
+    Typewriter("stand there... the journey's over (in this demo lol)");
     Console.WriteLine();
     Wait(3);
-    Typewriter("Congratulations, " + GameState.PlayerName + "! You have survived the forest and defeated the beast.");
+    Typewriter($"{Colors.Green}{Colors.Bold}Congratulations, {GameState.PlayerName}! You have survived the forest and defeated the beast.{Colors.Reset}");
     Console.WriteLine();
     Wait(2);
-    Typewriter("Thanks for playing, ig...");
+    Typewriter($"{Colors.DarkGray}Thanks for playing, ig...{Colors.Reset}");
     Environment.Exit(0);
-
 }
+
 public static class GameState
 {
     public static int PlayerHP = 20;
     public static string PlayerName = "Player";
+}
+
+public static class Colors
+{
+    public const string Reset = "\u001b[0m";
+    public const string Bold = "\u001b[1m";
+    public const string Red = "\u001b[31m";
+    public const string Green = "\u001b[32m";
+    public const string Yellow = "\u001b[33m";
+    public const string Cyan = "\u001b[36m";
+    public const string Magenta = "\u001b[35m";
+    public const string DarkGray = "\u001b[90m";
 }
