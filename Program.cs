@@ -70,10 +70,9 @@ if (proceed.ToLower() != "y")
 Console.WriteLine();
 Wait(1);
 Console.Write("Enter your name: ");
-string playerName = Console.ReadLine() ?? "Player";
+GameState.PlayerName = Console.ReadLine() ?? "Player";
 Console.WriteLine();
-Typewriter("Welcome, " + playerName + "! Let's begin your adventure.");
-int playerHP = 20;
+Typewriter("Welcome, " + GameState.PlayerName + "! Let's begin your adventure.");
 
 Wait(3);
 Console.WriteLine();
@@ -131,7 +130,7 @@ switch(choice)
                     Console.WriteLine();
                     Wait(2);
                     Typewriter("You restored +5 HP");
-                    playerHP += 5;
+                    GameState.PlayerHP += 5;
                     Clearing();
                 }
                 break;
@@ -184,4 +183,57 @@ static void Clearing()
         "Give up..."
     };
     int choice = GetChoice("What do you do?", animalChoices);
+    switch (choice)
+    {
+        case 1: 
+            Typewriter("You approach the beast with malice in your eyes, and as you step over it, you reach");
+            Typewriter("for your knife, but... you don't have any knife. The animal, seeing yoour weakness, bites");
+            Typewriter("you...");
+            Console.WriteLine();
+            Typewriter("You took 5 damage!");
+            GameState.PlayerHP -= 5;
+            if (GameState.PlayerHP <= 0)
+            {
+                Wait(2);
+                GameOver("Stop bullying defenseless animals, you monster.");
+            }
+            else
+            {
+                Typewriter("You manage to scare the animal away, but you are left with a wound and a sense of disappointment.");
+                Typewriter("how could you have lost to a simple creature. Oh well, be greatful you survived at all...");
+                Wait(2);
+                Clearing();
+            }
+            break;
+        case 2:
+            Typewriter("You decide to ignore the animal, and contiune your everlasting thirst for food. You search the clearing");
+            Typewriter("and finally find a small berry bush, and eat the berries, restoring your health.");
+            GameState.PlayerHP += 5;
+            Typewriter("You restored +5 HP");
+            Wait(2);
+            Typewriter("But as you finish eating, you hear a rustling in the bushes, and a wild beast jumps out at you!");
+            Typewriter("Its fangs glint in the moonlight... This doesn't look good, you need to act fast!");
+            Wait(2);
+            Console.WriteLine();
+            BeastCombat();
+            break;
+        case 3:
+            Typewriter("You give up, and sit down on the ground, feeling hopeless. The forest seems to close in around you,");
+            Typewriter("and you feel a sense of despair. You hear the howls of the wild creatures, and you know that your");
+            Typewriter("time is up...");
+            Wait(3);
+            GameOver("What a pussy, imagine giving up in a forest, you should be ashamed of yourself.");
+            break;
+
+    }
+}
+
+static void BeastCombat()
+{
+}
+
+public static class GameState
+{
+    public static int PlayerHP = 20;
+    public static string PlayerName = "Player";
 }
