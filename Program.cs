@@ -230,8 +230,85 @@ static void Clearing()
 
 static void BeastCombat()
 {
-}
+    int beastHP = 100;
+    int beastAttack = 5;
+    int beastDefense = 2;
+    int turnCount = 0;
+    int turnLimit = 10;
+    Random rand = new Random();
+    string[] fightChoices =
+    {
+        "Attack",
+        "Defend",
+        "Flee",
+    };
+    Typewriter("The forest beast appears...");
+    Wait(3);
+    while (beastHP > 0 && GameState.PlayerHP > 0)
+    {
+        turnCount++;
+        Console.WriteLine($"Turn {turnCount}: (Death in {turnLimit - turnCount})");
+        int choice = GetChoice("What do you do?", fightChoices);
+        switch(choice)
+        {
+            case 1:
+                int playerAttack = rand.Next(1, 10);
+                int damageToBeast = Math.Max(playerAttack - beastDefense, 0);
+                beastHP -= damageToBeast;
+                Typewriter("You pucnh the beast, dealing " + damageToBeast + " damage! Beast HP: " + beastHP);
+                break;
+            case 2:
+                Typewriter("You brace yourself for the beast's attack, reducing the damage taken.");
+                beastAttack /= 2;
+                break;
+            case 3:
+                Typewriter("You attempt to flee from the beast...");
+                int fleeRoll = rand.Next(1, 6);
+                if (fleeRoll <= 3)
+                {
+                    Typewriter("You successfully escape from the beast!");
+                    Clearing();
+                    return;
+                }
+                else
+                {
+                    Typewriter("You fail to escape, and the beast attacks you!");
+                }
+                break;
+        }
+        if (GameState.PlayerHP > 0)
+        {
+            int damageToPlayer = Math.Max(beastAttack - rand.Next(1, 5), 0);
+            GameState.PlayerHP -= damageToPlayer;
+            Typewriter("The beast bites you, dealing " + damageToPlayer + " damage! Your HP: " + GameState.PlayerHP);
+        }
+        else
+        {
+            Typewriter("You fall to the ground, and the beast stands over you, victorious. You have been defeated.");
+            Wait(3);
+            GameOver("Ouch... That's gotta hurt (both physiucally and emotionally).");
+        }
 
+        if (turnCount >= turnLimit)
+        {
+            Typewriter("You feeel exhausted, but foul beasts do not care... They circle in");
+            Typewriter("for the kill, and you know your time is up...");
+            Wait(3);
+            GameOver("Gotta go fast next time");
+        }
+    }
+    Console.WriteLine();
+    Typewriter("You have defeated the beast, and it lies on the ground, lifeless. You just");
+    Typewriter("stand there... the journeys over (in this demo lol)");
+    Console.WriteLine();
+    Wait(3);
+    Typewriter("Congratulations, " + GameState.PlayerName + "! You have survived the forest and defeated the beast.");
+    Console.WriteLine();
+    Wait(2);
+    Typewriter("Thanks for playing, ig...");
+    Environment.Exit(0);
+
+}
 public static class GameState
 {
     public static int PlayerHP = 20;
