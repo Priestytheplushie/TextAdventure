@@ -1,15 +1,17 @@
-﻿using System;
+using System;
 using System.Threading;
 
 Random rand = new Random();
 
 Console.Write("\u001b[0m");
 
+// Intro flow
 Console.WriteLine($"{Colors.Bold}{Colors.Magenta}Welcome to TextAdventure{Colors.Reset}"); 
 Console.WriteLine();
 Console.WriteLine($"{Colors.DarkGray}Disclaimer: This game is pretty trash lol{Colors.Reset}");
 Console.Write($"{Colors.Yellow}Proceed (y/n)? {Colors.Reset}");
 string proceed = Console.ReadLine() ?? "n";
+// Require disclaimer agreement before playing
 if (proceed.ToLower() != "y")
 {
     Console.WriteLine($"{Colors.Red}Exiting game...{Colors.Reset}");
@@ -22,6 +24,7 @@ GameState.PlayerName = Console.ReadLine() ?? "Player";
 if (string.IsNullOrWhiteSpace(GameState.PlayerName)) GameState.PlayerName = "Player";
 
 Console.WriteLine();
+// $ strings, similar to f-strings in python
 Typewriter($"Welcome, {Colors.Green}{GameState.PlayerName}{Colors.Reset}! Let's begin your adventure.");
 
 Wait(3);
@@ -118,9 +121,11 @@ switch(choice)
 
 void Wait(double seconds)
 {
+    // Wait for x seconds (Similar to python time.sleep())
     Thread.Sleep((int)(seconds * 1000));
 }
 
+// Choice builder UI
 int GetChoice(string prompt, string[] options)
 {
     int selectedChoice = -1;
@@ -129,6 +134,7 @@ int GetChoice(string prompt, string[] options)
     {
         Typewriter($"{Colors.Cyan}{prompt}{Colors.Reset}");
         
+        // Display choices
         for (int i = 0; i < options.Length; i++)
         {
             Console.WriteLine($"  {Colors.Yellow}{i + 1}.{Colors.Reset} {options[i]}");
@@ -136,7 +142,8 @@ int GetChoice(string prompt, string[] options)
 
         Console.Write($"{Colors.Bold}> {Colors.Reset}");
         string input = Console.ReadLine() ?? "";
-
+        
+        // Prevent invalid choices
         if (!int.TryParse(input, out selectedChoice) || selectedChoice < 1 || selectedChoice > options.Length)
         {
             Console.WriteLine($"\n{Colors.Red}[Invalid choice. Please enter a number between 1 and {options.Length}]{Colors.Reset}\n");
@@ -178,7 +185,7 @@ void GameOver(string message)
     Console.WriteLine($"\n{Colors.DarkGray}Press any key to exit...{Colors.Reset}");
     Console.ReadKey(true);
     
-    Environment.Exit(0); 
+    Environment.Exit(0);  // Exit game
 }
 
 void Clearing()
@@ -324,12 +331,14 @@ void BeastCombat()
     Environment.Exit(0);
 }
 
+// No global variables in C#, so must use a Class
 public static class GameState
 {
     public static int PlayerHP = 20;
     public static string PlayerName = "Player";
 }
 
+// Constants for color codes 
 public static class Colors
 {
     public const string Reset = "\u001b[0m";
